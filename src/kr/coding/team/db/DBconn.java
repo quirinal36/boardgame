@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.json.simple.JSONArray;
@@ -65,6 +66,41 @@ public class DBconn {
 				map.setyLoc(rs.getInt(Map.YLOC_KEY));
 				
 				result.add(map);
+			}
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	public HashMap<Integer, Map> getDataToHashMap(){
+		HashMap<Integer, Map> result = new HashMap<>();
+		
+		Connection conn = null;
+		try {
+			conn = getConnection();
+
+			Statement stmt = conn.createStatement();
+			ResultSet rs;
+			rs = stmt.executeQuery("SELECT * FROM Map");
+
+			while(rs.next()){
+				Map map = new Map();
+				map.setId(rs.getInt(Map.ID_KEY));
+				map.setName(rs.getString(Map.NAME_KEY));
+				map.setxLoc(rs.getInt(Map.XLOC_KEY));
+				map.setyLoc(rs.getInt(Map.YLOC_KEY));
+				
+//				result.add(map);
+				result.put(map.getId(), map);
 			}
 
 		} catch (ClassNotFoundException e) {

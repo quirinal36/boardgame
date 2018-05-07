@@ -14,8 +14,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -32,7 +35,9 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import kr.coding.team.db.DBconn;
+import kr.coding.team.db.bean.GameCharacter;
 import kr.coding.team.db.bean.Map;
+import kr.coding.team.util.ImageUtil;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -55,11 +60,12 @@ public class IndexView extends JFrame implements ActionListener{
 	
 	
 	// 게임 캐릭터
-	private ArrayList<JLabel> characters;
+	private ArrayList<GameCharacter> characters;
 	// 땅 (강릉, 오락실 ... )
 	private ArrayList<JLabel> mapList;
 	// 데이터베이스에서 얻어온 맵 리스트
-	private ArrayList<Map> maps;
+//	private ArrayList<Map> maps;
+	private HashMap<Integer, Map> maps;
 	
 	/**
 	 * Create the frame.
@@ -83,7 +89,7 @@ public class IndexView extends JFrame implements ActionListener{
 		new Runnable() {
 			public void run() {
 				DBconn db = new DBconn();
-				maps = db.getData();
+				maps = db.getDataToHashMap();
 			}
 		}.run();
 		
@@ -101,7 +107,7 @@ public class IndexView extends JFrame implements ActionListener{
 	 */
 	private void setBorderLayout(Container parent){
 		// 배경화면에 나올 이미지를 파일로 가져온다.
-		final Image image = getImageFromFile("img/map.png");
+		final Image image = new ImageUtil().getImageFromFile("img/map.png");
 		
 		// 게임 컨트롤러 (버튼, 음량, 점수등)
 		JPanel topPane = new JPanel();
@@ -133,28 +139,19 @@ public class IndexView extends JFrame implements ActionListener{
 		gamezone.setLayout(null);
 		
 		// 캐릭터 1번째
-		JLabel character01 = new JLabel();
-		Image characterImg01 = getImageFromFile("img/c_01.png");
-		Image scaledImage = characterImg01.getScaledInstance(60,60,Image.SCALE_SMOOTH);
-		ImageIcon characterIcon01 = new ImageIcon(scaledImage);
-		character01.setBounds(20, 540, 70, 70);
-		character01.setIcon(characterIcon01);
-		gamezone.add(character01);
-		characters.add(character01);
+		GameCharacter superman = new GameCharacter(32, "img/c_01.png");
+		gamezone.add(superman.getLabel());
+		characters.add(superman);
 		
 		// 캐릭터 2번째
-		JLabel character02 = new JLabel();
-		Image characterImg02 = getImageFromFile("img/c_02.png");
-		Image scaledImage02 = characterImg02.getScaledInstance(60,60,Image.SCALE_SMOOTH);
-		ImageIcon characterIcon02 = new ImageIcon(scaledImage02);
-		character02.setBounds(40, 540, 70, 70);
-		character02.setIcon(characterIcon02);
-		gamezone.add(character02);
-		characters.add(character02);
+		GameCharacter batman = new GameCharacter(32, "img/c_02.png");
+		gamezone.add(batman.getLabel());
+		characters.add(batman);
 		
-//		Iterator<Map> iter = maps.iterator();
-//		while(iter.hasNext()){
-		for(Map map : maps){
+		SortedSet<Integer> keys = new TreeSet<>(maps.keySet());
+		for(Integer mapId : keys){
+			Map map = maps.get(mapId);
+			
 			logger.info(map.toString());
 		
 			JLabel lblNewLabel = new JLabel("", SwingConstants.CENTER);
@@ -163,8 +160,6 @@ public class IndexView extends JFrame implements ActionListener{
 			lblNewLabel.setFont(new Font("굴림", Font.BOLD, 15));
 			gamezone.add(lblNewLabel);
 			mapList.add(lblNewLabel);
-			
-			//if(map.getId() > 25)break;
 			
 			logger.info("game zone added");
 		}
@@ -194,24 +189,7 @@ public class IndexView extends JFrame implements ActionListener{
 		parent.add(splitPane);
 	}
 	
-	/**
-	 * 이미지를 파일로부터 가져오는 역할
-	 * 
-	 * @param fileName
-	 * @return
-	 */
-	private Image getImageFromFile(String fileName){
-		Image image = null;
 		
-		try{
-			image = ImageIO.read(new File(fileName));
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		
-		return image;
-	}
-	
 	/**
 	 * 이미지를 URL 로부터 가져오는 역할
 	 * 예) param url : "http://dev.bacoder.kr/temp/img/map.png"
@@ -265,15 +243,12 @@ public class IndexView extends JFrame implements ActionListener{
 					ImageIcon imageIcon = new ImageIcon("img/"+rollingResult+".png");
 					labelRollingDice.setIcon(imageIcon);
 					
-					// 캐릭터의 제일 처음위치
-					int moveY = 540;
-					
-					if(rollingResult < 8){
-						moveY = moveY - (64 * rollingResult); // 주사위 결과에 따라 움직일 좌표값
-						logger.info("moveY :: " + moveY);
-						characters.get(0).setLocation(20, moveY);
-					}
-					
+					// current 좌표 + 주사위 좌표 
+					int nextMap = rollingResult + characters.get(0).getWhere();
+					logger.info("nextMap::"+nextMap);
+					characters.get(0).setWhere(nextMap);
+					Map map = maps.get(characters.get(0).getWhere());
+					characters.get(0).getLabel().setLocation(map.getxLoc(), map.getyLoc());
 					btnRolldice.setEnabled(true);
 				}
 			};
