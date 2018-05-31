@@ -34,9 +34,11 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import org.json.simple.parser.ParseException;
+
 import kr.coding.team.db.DBconn;
 import kr.coding.team.db.bean.GameCharacter;
-import kr.coding.team.db.bean.Map;
+import kr.coding.team.db.bean.City;
 import kr.coding.team.util.ImageUtil;
 
 import javax.swing.ImageIcon;
@@ -50,6 +52,7 @@ import javax.swing.JButton;
 public class IndexView extends JFrame implements ActionListener{
 	// logger 는 system.out.println 과 비슷한 역할을 하는 객체입니다.
 	public static final Logger logger = Logger.getLogger(IndexView.class.getSimpleName());
+	private final String getMapJsp = "http://dev.bacoder.kr/temp/getCity.jsp";
 	
 	// 주사위 던지기 버튼
 	JButton btnRolldice;
@@ -65,7 +68,7 @@ public class IndexView extends JFrame implements ActionListener{
 	private ArrayList<JLabel> mapList;
 	// 데이터베이스에서 얻어온 맵 리스트
 //	private ArrayList<Map> maps;
-	private HashMap<Integer, Map> maps;
+	private HashMap<Integer, City> maps;
 	
 	/**
 	 * Create the frame.
@@ -74,7 +77,7 @@ public class IndexView extends JFrame implements ActionListener{
 		this.setTitle(title);
 
 		// 게임이 시작됨과 동시에 실행되는 배경음악
-		bgmPlay(new File("bgm/bgm.wav"));
+//		bgmPlay(new File("bgm/bgm.wav"));
 
 		// 닫힘 버튼 클릭 할 때 실행되는 기능을 적어줌
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,6 +93,11 @@ public class IndexView extends JFrame implements ActionListener{
 			public void run() {
 				DBconn db = new DBconn();
 				maps = db.getDataToHashMap();
+				try {
+					db.getMapsFromURL(getMapJsp);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		}.run();
 		
@@ -148,11 +156,16 @@ public class IndexView extends JFrame implements ActionListener{
 		gamezone.add(batman.getLabel());
 		characters.add(batman);
 		
+		// 캐릭터 3번째
+		GameCharacter hulk = new GameCharacter(32, "img/d_02.png");
+		gamezone.add(hulk.getLabel());
+		characters.add(hulk);
+		
 		SortedSet<Integer> keys = new TreeSet<>(maps.keySet());
 		for(Integer mapId : keys){
-			Map map = maps.get(mapId);
+			City map = maps.get(mapId);
 			
-			logger.info(map.toString());
+//			logger.info(map.toString());
 		
 			JLabel lblNewLabel = new JLabel("", SwingConstants.CENTER);
 			lblNewLabel.setText(map.getName());
@@ -195,6 +208,7 @@ public class IndexView extends JFrame implements ActionListener{
 	 * 예) param url : "http://dev.bacoder.kr/temp/img/map.png"
 	 * @return
 	 */
+	/*
 	private Image getImageFromUrl(String imgUrl){
 		Image image = null;
 		
@@ -206,6 +220,8 @@ public class IndexView extends JFrame implements ActionListener{
 		
 		return image;
 	}
+	*/
+	int characterOrder = 0;
 	
 	/**
 	 * 버튼 클릭이 발생 했을 때 
@@ -226,7 +242,7 @@ public class IndexView extends JFrame implements ActionListener{
 			
 			// console 에 System.out.println 처럼 뿌려주는 역할
 			logger.info("roll dice button clicked");
-			bgmPlay(new File("bgm/dice.wav")); // 주사위가 굴러가는소리
+//			bgmPlay(new File("bgm/dice.wav")); // 주사위가 굴러가는소리
 			
 			ActionListener taskPerformer = new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -244,47 +260,34 @@ public class IndexView extends JFrame implements ActionListener{
 					labelRollingDice.setIcon(imageIcon);
 					
 					// current 좌표 + 주사위 좌표 
-					int nextMap = rollingResult + characters.get(0).getWhere();
+					int nextMap = rollingResult + characters.get(characterOrder).getWhere();
 					logger.info("nextMap::"+nextMap);
-					characters.get(0).setWhere(nextMap);
-					Map map = maps.get(characters.get(0).getWhere());
-					characters.get(0).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+					if(characterOrder == 0){
+						characters.get(0).setWhere(nextMap);
+						City map = maps.get(characters.get(0).getWhere());
+						characters.get(0).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characterOrder = characterOrder + 1;
+					}else if(characterOrder == 1){
+						characters.get(1).setWhere(nextMap);
+						City map = maps.get(characters.get(1).getWhere());
+						characters.get(1).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characterOrder = characterOrder + 1;
+					}else if(characterOrder == 2){
+						characters.get(2).setWhere(nextMap);
+						City map = maps.get(characters.get(2).getWhere());
+						characters.get(2).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characterOrder = characterOrder - 2;
+					}
 					btnRolldice.setEnabled(true);
 				}
 			};
 			
-			int delay = 1000; //milliseconds 즉 1초
+			int delay = 500; //milliseconds 즉 1초
 			// 1초간 딜레이를 준 뒤 캐릭터를 움직이자.
 			// 주사위가 구르고, 결과값이 나오는 시간동안 기다렸다가
 			// 캐릭터가 움직여야 한다.
 			timer = new Timer(delay, taskPerformer);
 			timer.start();
 		}
-	}
-	
-	/**
-	 * 파일을 받아와
-	 * 시스템에서 음악을 재생시킨다
-	 * 단 한번만 실행됨
-	 * 
-	 * @param file
-	 */
-	public void bgmPlay(File file){
-	    try{
-	        final Clip clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
-	        clip.addLineListener(new LineListener(){
-	            @Override
-	            public void update(LineEvent event){
-	                if (event.getType() == LineEvent.Type.STOP)
-	                    clip.close();
-	            }
-	        });
-
-	        clip.open(AudioSystem.getAudioInputStream(file));
-	        clip.start();
-	    }
-	    catch (Exception exc){
-	        exc.printStackTrace(System.out);
-	    }
 	}
 }

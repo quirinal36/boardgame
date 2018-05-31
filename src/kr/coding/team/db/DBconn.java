@@ -11,8 +11,9 @@ import java.util.Properties;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
-import kr.coding.team.db.bean.Map;
+import kr.coding.team.db.bean.City;
 
 public class DBconn {
 	private String userName 	= "root";
@@ -22,6 +23,16 @@ public class DBconn {
 	private String serverName 	= "35.194.236.5";
 	private int portNumber 		= 3306;
 	
+	public void getMapsFromURL(String getMapJsp) throws ParseException{
+		String html = GetStringUtil.getStringFromUrl(getMapJsp);
+		System.out.println(html);
+		
+		JsonUtil jsonUtil = new JsonUtil();
+		JSONObject json = jsonUtil.parseToJson(html);
+		
+		
+	}
+	
 	public Connection getConnection() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");
 	    Connection conn = null;
@@ -30,12 +41,15 @@ public class DBconn {
 	    connectionProps.put("password", this.password);
 
 	    if (this.dbms.equals("mysql")) {
-	        conn = DriverManager.getConnection(
-	                   "jdbc:" + this.dbms + "://" +
+	    	final String url = "jdbc:" + this.dbms + "://" +
 	                   this.serverName +
 	                   ":" + this.portNumber + "/" +
 	                   this.dbName + "?" +
-	                   "useSSL=false",
+	                   "useSSL=false";
+	    	System.out.println("url :: " + url);
+	    	
+	        conn = DriverManager.getConnection(
+	                   url,
 	                   connectionProps);
 	    } else if (this.dbms.equals("derby")) {
 	        conn = DriverManager.getConnection(
@@ -47,8 +61,8 @@ public class DBconn {
 	    System.out.println("Connected to database");
 	    return conn;
 	}
-	public ArrayList<Map> getData(){
-		ArrayList<Map> result = new ArrayList<>();
+	public ArrayList<City> getData(){
+		ArrayList<City> result = new ArrayList<>();
 		
 		Connection conn = null;
 		try {
@@ -59,11 +73,11 @@ public class DBconn {
 			rs = stmt.executeQuery("SELECT * FROM Map");
 
 			while(rs.next()){
-				Map map = new Map();
-				map.setId(rs.getInt(Map.ID_KEY));
-				map.setName(rs.getString(Map.NAME_KEY));
-				map.setxLoc(rs.getInt(Map.XLOC_KEY));
-				map.setyLoc(rs.getInt(Map.YLOC_KEY));
+				City map = new City();
+				map.setId(rs.getInt(City.ID_KEY));
+				map.setName(rs.getString(City.NAME_KEY));
+				map.setxLoc(rs.getInt(City.XLOC_KEY));
+				map.setyLoc(rs.getInt(City.YLOC_KEY));
 				
 				result.add(map);
 			}
@@ -81,8 +95,9 @@ public class DBconn {
 		}
 		return result;
 	}
-	public HashMap<Integer, Map> getDataToHashMap(){
-		HashMap<Integer, Map> result = new HashMap<>();
+	
+	public HashMap<Integer, City> getDataToHashMap(){
+		HashMap<Integer, City> result = new HashMap<>();
 		
 		Connection conn = null;
 		try {
@@ -93,13 +108,14 @@ public class DBconn {
 			rs = stmt.executeQuery("SELECT * FROM Map");
 
 			while(rs.next()){
-				Map map = new Map();
-				map.setId(rs.getInt(Map.ID_KEY));
-				map.setName(rs.getString(Map.NAME_KEY));
-				map.setxLoc(rs.getInt(Map.XLOC_KEY));
-				map.setyLoc(rs.getInt(Map.YLOC_KEY));
+				City map = new City();
+				map.setId(rs.getInt(City.ID_KEY));
+				map.setName(rs.getString(City.NAME_KEY));
+				map.setxLoc(rs.getInt(City.XLOC_KEY));
+				map.setyLoc(rs.getInt(City.YLOC_KEY));
 				
 //				result.add(map);
+				System.out.println(map.toString());
 				result.put(map.getId(), map);
 			}
 

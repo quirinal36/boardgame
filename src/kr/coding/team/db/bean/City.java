@@ -4,21 +4,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.json.simple.JSONObject;
 
-public class Map {
-	public static final String ID_KEY = "idMap";
+public class City {
+	public static final String ID_KEY = "id";
 	public static final String NAME_KEY = "name";
-	public static final String XLOC_KEY = "x_loc";
-	public static final String YLOC_KEY = "y_loc";
+	public static final String XLOC_KEY = "xLoc";
+	public static final String YLOC_KEY = "yLoc";
 	
 	int id;
 	String name;
 	int xLoc;
 	int yLoc;
+	
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public void setId(Long id) {
+		this.id = id.intValue();
 	}
 	public String getName() {
 		return name;
@@ -32,19 +36,25 @@ public class Map {
 	public void setxLoc(int xLoc) {
 		this.xLoc = xLoc;
 	}
+	public void setxLoc(Long xLoc) {
+		this.xLoc = xLoc.intValue();
+	}
 	public int getyLoc() {
 		return yLoc;
 	}
 	public void setyLoc(int yLoc) {
 		this.yLoc = yLoc;
 	}
-	public static Map parseMap(JSONObject json){
-		Map result = new Map();
+	public void setyLoc(Long yLoc) {
+		this.yLoc = yLoc.intValue();
+	}
+	public static City parseMap(JSONObject json){
+		City result = new City();
 		
-		result.setId((int)json.get(ID_KEY));
-		result.setName((String)json.get(NAME_KEY));
-		result.setxLoc((int)json.get(XLOC_KEY));
-		result.setyLoc((int)json.get(YLOC_KEY));
+		if(json.get(ID_KEY) != null) result.setId((Long)json.get(ID_KEY));
+		if(json.get(NAME_KEY) != null) result.setName((String)json.get(NAME_KEY));
+		if(json.get(XLOC_KEY) != null) result.setxLoc((long)json.get(XLOC_KEY));
+		if(json.get(YLOC_KEY) != null) result.setyLoc((long)json.get(YLOC_KEY));
 		
 		return result;
 	}

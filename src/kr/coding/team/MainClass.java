@@ -2,6 +2,7 @@ package kr.coding.team;
 
 import javax.swing.SwingUtilities;
 
+import kr.coding.team.view.GameView;
 import kr.coding.team.view.IndexView;
 
 public class MainClass {
@@ -11,7 +12,7 @@ public class MainClass {
 			
 			@Override
 			public void run() {
-				IndexView gameView = new IndexView("보드게임");
+				GameView gameView = new GameView("보드게임");
 				gameView.setVisible(true);
 			}
 		});

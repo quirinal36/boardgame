@@ -25,6 +25,12 @@ public class GameCharacter {
 		this.label.setIcon(characterIcon01);
 		this.setWhere(where);
 	}
+	public void moveToCity(City city){
+		this.label.setLocation(city.getxLoc(), city.getyLoc());
+	}
+//	public void move(int to){
+//		this.setWhere(to + getWhere());
+//	}
 	public String getImg() {
 		return img;
 	}
@@ -32,7 +38,7 @@ public class GameCharacter {
 		this.img = img;
 	}
 	public int getWhere() {
-		return where>31 ? where-31 : where;
+		return where>32 ? where-32 : where;
 	}
 	public void setWhere(int where) {
 		this.where = where;
