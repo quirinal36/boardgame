@@ -14,6 +14,24 @@ public class Dice extends JLabel{
 	SoundUtil sound;
 	ImageIcon numberOfDiceIcon;
 	
+	public ImageIcon getRollingDiceIcon() {
+		return rollingDiceIcon;
+	}
+	public void setRollingDiceIcon(ImageIcon rollingDiceIcon) {
+		this.rollingDiceIcon = rollingDiceIcon;
+	}
+	public SoundUtil getSound() {
+		return sound;
+	}
+	public void setSound(SoundUtil sound) {
+		this.sound = sound;
+	}
+	public ImageIcon getNumberOfDiceIcon() {
+		return numberOfDiceIcon;
+	}
+	public void setNumberOfDiceIcon(ImageIcon numberOfDiceIcon) {
+		this.numberOfDiceIcon = numberOfDiceIcon;
+	}
 	public Dice(){
 		sound = new SoundUtil();
 		

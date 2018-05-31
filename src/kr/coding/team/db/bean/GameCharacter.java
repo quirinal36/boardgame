@@ -10,27 +10,22 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import kr.coding.team.util.ImageUtil;
 
-public class GameCharacter {
+public class GameCharacter extends JLabel{
 	String img;
 	int where;
 	String name;
-	JLabel label;
 	
 	public GameCharacter(int where, String img){
 		Image characterImg01 = new ImageUtil().getImageFromFile(img);
 		Image scaledImage = characterImg01.getScaledInstance(60,60,Image.SCALE_SMOOTH);
 		ImageIcon characterIcon01 = new ImageIcon(scaledImage);
-		this.label = new JLabel();
-		this.label.setBounds(20, 540, 70, 70);
-		this.label.setIcon(characterIcon01);
+		this.setBounds(20, 540, 70, 70);
+		this.setIcon(characterIcon01);
 		this.setWhere(where);
 	}
 	public void moveToCity(City city){
-		this.label.setLocation(city.getxLoc(), city.getyLoc());
+		this.setLocation(city.getxLoc(), city.getyLoc());
 	}
-//	public void move(int to){
-//		this.setWhere(to + getWhere());
-//	}
 	public String getImg() {
 		return img;
 	}
@@ -48,12 +43,6 @@ public class GameCharacter {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public JLabel getLabel() {
-		return label;
-	}
-	public void setLabel(JLabel label) {
-		this.label = label;
 	}
 	@Override
 	public String toString() {

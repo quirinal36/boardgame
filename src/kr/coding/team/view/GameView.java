@@ -56,6 +56,7 @@ public class GameView extends JFrame implements ActionListener{
 	Timer timer;
 	// 현재 움직여야하는 캐릭터
 	int gamerOrder=0;
+	
 	// 맵이 저장되어있는 해쉬맵
 	private HashMap<Integer, City> maps;
 	
@@ -64,7 +65,7 @@ public class GameView extends JFrame implements ActionListener{
 		gamerList = new ArrayList<>();
 		sound = new SoundUtil();
 		maps = new HashMap<Integer, City>();
-		
+		dice = new Dice();
 		sound.bgmPlay(new File("bgm/bgm.wav"));
 		
 		setMapInfo();
@@ -77,7 +78,7 @@ public class GameView extends JFrame implements ActionListener{
 	}
 
 	public void setGamerOrder(int gamerOrder) {
-		if(gamerOrder > 1)gamerOrder = 0;
+		if(gamerOrder >= gamerList.size())gamerOrder = 0;
 		this.gamerOrder = gamerOrder;
 	}
 
@@ -91,10 +92,13 @@ public class GameView extends JFrame implements ActionListener{
 		// 동서남북에 배치를 할 수 있도록 레이아웃을 정해준다.
 		contentPane.setLayout(new BorderLayout());
 
-		dice = new Dice();
-		
+		// game 이 이뤄지는 공간 만들기
 		JPanel gamezone = setGamePanel(new ImageUtil().getImageFromFile("img/map.png"));
+		
+		// 도시 이름들을 화면에 뿌리는 코드
 		setCityNames(gamezone);
+		
+		// 게임 캐릭터들을 더해주는 코드
 		setGamers(gamezone);
 		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, setTopPane(), gamezone);
@@ -186,11 +190,20 @@ public class GameView extends JFrame implements ActionListener{
 	private void setGamers(JPanel gamezone){
 		// 캐릭터를 추가합니다.
 		GameCharacter superman = new GameCharacter(32, "img/c_01.png");
-		GameCharacter batman = new GameCharacter(32, "img/c_02.png");
 		gamerList.add(superman);
+		gamezone.add(superman);
+		
+		GameCharacter batman = new GameCharacter(32, "img/c_02.png");
 		gamerList.add(batman);
-		gamezone.add(superman.getLabel());
-		gamezone.add(batman.getLabel());
+		gamezone.add(batman);
+		
+		GameCharacter captain = new GameCharacter(32, "img/d_01.png");
+		gamerList.add(captain);
+		gamezone.add(captain);
+		
+		GameCharacter hulk = new GameCharacter(32, "img/d_02.png");
+		gamerList.add(hulk);
+		gamezone.add(hulk);
 	}
 	private void setMapInfo(){
 		String mapJsonStr = GetStringUtil.getStringFromUrl(getMapJsp);

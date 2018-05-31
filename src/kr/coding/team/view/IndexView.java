@@ -148,17 +148,17 @@ public class IndexView extends JFrame implements ActionListener{
 		
 		// 캐릭터 1번째
 		GameCharacter superman = new GameCharacter(32, "img/c_01.png");
-		gamezone.add(superman.getLabel());
+		gamezone.add(superman);
 		characters.add(superman);
 		
 		// 캐릭터 2번째
 		GameCharacter batman = new GameCharacter(32, "img/c_02.png");
-		gamezone.add(batman.getLabel());
+		gamezone.add(batman);
 		characters.add(batman);
 		
 		// 캐릭터 3번째
 		GameCharacter hulk = new GameCharacter(32, "img/d_02.png");
-		gamezone.add(hulk.getLabel());
+		gamezone.add(hulk);
 		characters.add(hulk);
 		
 		SortedSet<Integer> keys = new TreeSet<>(maps.keySet());
@@ -265,17 +265,17 @@ public class IndexView extends JFrame implements ActionListener{
 					if(characterOrder == 0){
 						characters.get(0).setWhere(nextMap);
 						City map = maps.get(characters.get(0).getWhere());
-						characters.get(0).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characters.get(0).setLocation(map.getxLoc(), map.getyLoc());
 						characterOrder = characterOrder + 1;
 					}else if(characterOrder == 1){
 						characters.get(1).setWhere(nextMap);
 						City map = maps.get(characters.get(1).getWhere());
-						characters.get(1).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characters.get(1).setLocation(map.getxLoc(), map.getyLoc());
 						characterOrder = characterOrder + 1;
 					}else if(characterOrder == 2){
 						characters.get(2).setWhere(nextMap);
 						City map = maps.get(characters.get(2).getWhere());
-						characters.get(2).getLabel().setLocation(map.getxLoc(), map.getyLoc());
+						characters.get(2).setLocation(map.getxLoc(), map.getyLoc());
 						characterOrder = characterOrder - 2;
 					}
 					btnRolldice.setEnabled(true);
