@@ -38,6 +38,7 @@ import kr.coding.team.db.JsonUtil;
 import kr.coding.team.db.bean.Dice;
 import kr.coding.team.db.bean.GameCharacter;
 import kr.coding.team.db.bean.City;
+import kr.coding.team.db.bean.CityView;
 import kr.coding.team.util.ImageUtil;
 import kr.coding.team.util.SoundUtil;
 
@@ -66,7 +67,7 @@ public class GameView extends JFrame implements ActionListener{
 		sound = new SoundUtil();
 		maps = new HashMap<Integer, City>();
 		dice = new Dice();
-		sound.bgmPlay(new File("bgm/bgm.wav"));
+//		sound.bgmPlay(new File("bgm/bgm.wav"));
 		
 		setMapInfo();
 		
@@ -174,6 +175,9 @@ public class GameView extends JFrame implements ActionListener{
 					
 					City city = maps.get(curGamer.getWhere());
 					curGamer.moveToCity(city);
+					System.out.println(city.toString()); //추가
+					
+					CityView frame = new CityView(city);
 					
 					setGamerOrder(getGamerOrder() + 1);
 				}

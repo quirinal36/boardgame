@@ -9,11 +9,13 @@ public class City {
 	public static final String NAME_KEY = "name";
 	public static final String XLOC_KEY = "xLoc";
 	public static final String YLOC_KEY = "yLoc";
+	public static final String PRICE_KEY = "price"; // 추가
 	
 	int id;
 	String name;
 	int xLoc;
 	int yLoc;
+	int price; // 추가
 	
 	public int getId() {
 		return id;
@@ -48,6 +50,12 @@ public class City {
 	public void setyLoc(Long yLoc) {
 		this.yLoc = yLoc.intValue();
 	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(Long price) {
+		this.price = price.intValue();
+	}
 	public static City parseMap(JSONObject json){
 		City result = new City();
 		
@@ -55,6 +63,7 @@ public class City {
 		if(json.get(NAME_KEY) != null) result.setName((String)json.get(NAME_KEY));
 		if(json.get(XLOC_KEY) != null) result.setxLoc((long)json.get(XLOC_KEY));
 		if(json.get(YLOC_KEY) != null) result.setyLoc((long)json.get(YLOC_KEY));
+		if(json.get(PRICE_KEY) != null) result.setPrice((long)json.get(PRICE_KEY));//추가
 		
 		return result;
 	}
