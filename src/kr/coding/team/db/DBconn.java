@@ -25,7 +25,6 @@ public class DBconn {
 	
 	public void getMapsFromURL(String getMapJsp) throws ParseException{
 		String html = GetStringUtil.getStringFromUrl(getMapJsp);
-		System.out.println(html);
 		
 		JsonUtil jsonUtil = new JsonUtil();
 		JSONObject json = jsonUtil.parseToJson(html);
@@ -46,7 +45,6 @@ public class DBconn {
 	                   ":" + this.portNumber + "/" +
 	                   this.dbName + "?" +
 	                   "useSSL=false";
-	    	System.out.println("url :: " + url);
 	    	
 	        conn = DriverManager.getConnection(
 	                   url,
@@ -58,7 +56,6 @@ public class DBconn {
 	                   ";create=true",
 	                   connectionProps);
 	    }
-	    System.out.println("Connected to database");
 	    return conn;
 	}
 	public ArrayList<City> getData(){
@@ -115,7 +112,6 @@ public class DBconn {
 				map.setyLoc(rs.getInt(City.YLOC_KEY));
 				
 //				result.add(map);
-				System.out.println(map.toString());
 				result.put(map.getId(), map);
 			}
 

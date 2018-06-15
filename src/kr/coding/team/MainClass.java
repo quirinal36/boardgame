@@ -9,11 +9,10 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable(){
-			
 			@Override
 			public void run() {
-				GameView gameView = new GameView("보드게임");
-				gameView.setVisible(true);
+				//GameView gameView = new GameView("보드게임");
+//				gameView.setVisible(true);
 			}
 		});
 	}

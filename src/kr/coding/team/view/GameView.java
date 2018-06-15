@@ -175,7 +175,6 @@ public class GameView extends JFrame implements ActionListener{
 					
 					City city = maps.get(curGamer.getWhere());
 					curGamer.moveToCity(city);
-					System.out.println(city.toString()); //추가
 					
 					CityView frame = new CityView(city);
 					
